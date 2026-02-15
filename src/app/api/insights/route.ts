@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Compute analytics
-    const dailyRevenue = transactions.map(t => ({
+    const dailyRevenue = transactions.map((t: Transaction) => ({
       date: t.date.toISOString().split('T')[0],
       revenue: t.revenue,
       cost: t.cost,

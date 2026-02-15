@@ -14,6 +14,7 @@ export default function UploadPage() {
   const [newBusinessName, setNewBusinessName] = useState('');
   const [newBusinessIndustry, setNewBusinessIndustry] = useState('');
   const [loading, setLoading] = useState(true);
+  const [creatingBusiness, setCreatingBusiness] = useState(false);
 
   useEffect(() => {
     loadBusinesses();
@@ -43,6 +44,7 @@ export default function UploadPage() {
     if (!newBusinessName.trim()) return;
 
     try {
+      setCreatingBusiness(true);
       const { business } = await createBusiness({
         name: newBusinessName,
         industry: newBusinessIndustry || undefined,
@@ -56,6 +58,8 @@ export default function UploadPage() {
       setNewBusinessIndustry('');
     } catch (error) {
       console.error('Failed to create business:', error);
+    } finally {
+      setCreatingBusiness(false);
     }
   };
 
@@ -171,7 +175,7 @@ export default function UploadPage() {
                   type="text"
                   value={newBusinessName}
                   onChange={(e) => setNewBusinessName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   placeholder="e.g., My Coffee Shop"
                 />
               </div>
@@ -184,7 +188,7 @@ export default function UploadPage() {
                   type="text"
                   value={newBusinessIndustry}
                   onChange={(e) => setNewBusinessIndustry(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   placeholder="e.g., Food & Beverage"
                 />
               </div>
@@ -193,10 +197,17 @@ export default function UploadPage() {
             <div className="flex items-center gap-3 mt-6">
               <button
                 onClick={handleCreateBusiness}
-                disabled={!newBusinessName.trim()}
+                disabled={!newBusinessName.trim() || creatingBusiness}
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
-                Create
+                {creatingBusiness ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Creating...</span>
+                  </div>
+                ) : (
+                  'Create'
+                )}
               </button>
               <button
                 onClick={() => {

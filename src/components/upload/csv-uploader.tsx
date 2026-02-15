@@ -15,6 +15,7 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadResult, setUploadResult] = useState<any>(null);
+  const [downloadingSample, setDownloadingSample] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,9 +57,12 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
 
   const handleDownloadSample = async () => {
     try {
+      setDownloadingSample(true);
       await downloadSampleCSV();
     } catch (err) {
       setError('Failed to download sample CSV');
+    } finally {
+      setDownloadingSample(false);
     }
   };
 
@@ -137,10 +141,20 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
 
         <button
           onClick={handleDownloadSample}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+          disabled={downloadingSample}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
         >
-          <Download className="w-4 h-4" />
-          Sample CSV
+          {downloadingSample ? (
+            <>
+              <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+              Downloading...
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4" />
+              Sample CSV
+            </>
+          )}
         </button>
       </div>
 

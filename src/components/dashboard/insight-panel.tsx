@@ -23,7 +23,7 @@ interface InsightPanelProps {
 export function InsightPanel({ insights, loading = false, onRefresh }: InsightPanelProps) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
-  if (loading) {
+  if (loading && (!insights || !insights.insights || insights.insights.length === 0)) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="animate-pulse">
@@ -150,10 +150,15 @@ export function InsightPanel({ insights, loading = false, onRefresh }: InsightPa
         {onRefresh && (
           <button
             onClick={onRefresh}
-            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled={loading}
+            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-60"
             title="Refresh insights"
           >
-            <RefreshCw className="w-5 h-5" />
+            {loading ? (
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <RefreshCw className="w-5 h-5" />
+            )}
           </button>
         )}
       </div>
