@@ -1,0 +1,61 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // For SQLite local dev, use:
+  // provider = "sqlite"
+}
+
+model Business {
+  id           String        @id @default(cuid())
+  name         String
+  industry     String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+
+  @@index([createdAt])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  
+  date        DateTime
+  productName String
+  category    String?
+  quantity    Float
+  revenue     Float
+  cost        Float
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([businessId])
+  @@index([date])
+  @@index([productName])
+  @@index([businessId, date])
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  businessId String
+  
+  reportType String   // 'monthly', 'quarterly', 'annual'
+  startDate  DateTime
+  endDate    DateTime
+  
+  pdfUrl     String?
+  status     String   @default("pending") // 'pending', 'completed', 'failed'
+  
+  createdAt  DateTime @default(now())
+  
+  @@index([businessId])
+  @@index([createdAt])
+}
