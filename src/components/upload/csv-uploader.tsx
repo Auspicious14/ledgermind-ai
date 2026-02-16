@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, FileText, CheckCircle, AlertCircle, Download } from 'lucide-react';
-import { uploadTransactions, downloadSampleCSV } from '@/lib/api-client';
+import { Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import { uploadTransactions } from '@/lib/api-client';
 
 interface CSVUploaderProps {
   businessId: string;
@@ -15,7 +15,6 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadResult, setUploadResult] = useState<any>(null);
-  const [downloadingSample, setDownloadingSample] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,17 +51,6 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
       setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleDownloadSample = async () => {
-    try {
-      setDownloadingSample(true);
-      await downloadSampleCSV();
-    } catch (err) {
-      setError('Failed to download sample CSV');
-    } finally {
-      setDownloadingSample(false);
     }
   };
 
@@ -116,7 +104,7 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center justify-center mb-6">
         <button
           onClick={handleUpload}
           disabled={!file || uploading}
@@ -135,24 +123,6 @@ export function CSVUploader({ businessId, onUploadSuccess }: CSVUploaderProps) {
             <>
               <Upload className="w-4 h-4" />
               Upload CSV
-            </>
-          )}
-        </button>
-
-        <button
-          onClick={handleDownloadSample}
-          disabled={downloadingSample}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          {downloadingSample ? (
-            <>
-              <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
-              Downloading...
-            </>
-          ) : (
-            <>
-              <Download className="w-4 h-4" />
-              Sample CSV
             </>
           )}
         </button>
