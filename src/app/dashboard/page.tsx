@@ -105,7 +105,10 @@ export default function DashboardPage() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/')}
+              className="flex items-center gap-3"
+            >
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
@@ -115,7 +118,7 @@ export default function DashboardPage() {
                   {data?.business.name || 'Loading...'}
                 </p>
               </div>
-            </div>
+            </button>
             
             <div className="flex items-center gap-3">
               <button

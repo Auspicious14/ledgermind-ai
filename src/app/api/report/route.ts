@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Compute all analytics
-    const dailyRevenue = transactions.map((t: Transaction) => ({
+    const dailyRevenue = transactions.map((t: any) => ({
       date: t.date.toISOString().split('T')[0],
       revenue: t.revenue,
       cost: t.cost,
@@ -60,7 +60,19 @@ export async function GET(request: NextRequest) {
     }));
     
     const anomalyResult = detectAnomalies(dailyRevenue);
-    const analytics = computeAnalytics(transactions as Transaction[], anomalyResult.anomalies.length);
+    const domainTransactions: Transaction[] = transactions.map((t: any) => ({
+      id: t.id,
+      businessId: t.businessId,
+      date: t.date,
+      productName: t.productName,
+      category: t.category ?? undefined,
+      quantity: t.quantity,
+      revenue: t.revenue,
+      cost: t.cost,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    }));
+    const analytics = computeAnalytics(domainTransactions, anomalyResult.anomalies.length);
     const forecast = forecastRevenue(analytics.dailyRevenue, 30);
     
     // Generate insights

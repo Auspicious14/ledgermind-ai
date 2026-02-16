@@ -63,28 +63,29 @@ Be specific and actionable. Avoid generic advice. Use exact numbers from the met
 `.trim();
 }
 
-/**
- * Calls Claude API to generate insights
- */
 export async function generateInsights(
   metrics: MetricsForInsight
 ): Promise<InsightEngineResult> {
   const prompt = formatMetricsForLLM(metrics);
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('Missing GOOGLE_GEMINI_API_KEY');
+    }
+
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
+        'x-goog-api-key': apiKey,
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [
+        contents: [
           {
             role: 'user',
-            content: prompt,
+            parts: [{ text: prompt }],
           },
         ],
       }),
@@ -95,7 +96,10 @@ export async function generateInsights(
     }
 
     const data = await response.json();
-    const content = data.content[0]?.text || '';
+    const content =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join(' ') ||
+      '';
 
     // Parse JSON response
     const parsed = JSON.parse(content);

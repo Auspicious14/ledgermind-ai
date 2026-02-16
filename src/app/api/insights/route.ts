@@ -6,7 +6,6 @@ import { computeAnalytics } from '@/core/analytics';
 import { forecastRevenue } from '@/core/forecasting';
 import { detectAnomalies } from '@/core/anomaly';
 import { generateInsights, prepareMetricsForInsight } from '@/core/insight-engine';
-import { Transaction } from '@/types';
 
 /**
  * GET /api/insights?businessId=xxx
@@ -50,7 +49,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Compute analytics
-    const dailyRevenue = transactions.map((t: Transaction) => ({
+    const dailyRevenue = transactions.map((t: any) => ({
       date: t.date.toISOString().split('T')[0],
       revenue: t.revenue,
       cost: t.cost,
@@ -58,7 +57,7 @@ export async function GET(request: NextRequest) {
     }));
     
     const anomalyResult = detectAnomalies(dailyRevenue);
-    const analytics = computeAnalytics(transactions as Transaction[], anomalyResult.anomalies.length);
+    const analytics = computeAnalytics(transactions as any, anomalyResult.anomalies.length);
     const forecast = forecastRevenue(analytics.dailyRevenue, 30);
     
     // Prepare metrics and generate insights

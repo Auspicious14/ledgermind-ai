@@ -71,12 +71,25 @@ export async function GET(request: NextRequest) {
         revenue: t.revenue,
         cost: t.cost,
         profit: t.revenue - t.cost,
-        
       }))
     );
     
     // Compute analytics
-    const analytics = computeAnalytics(transactions as Transaction[], anomalyResult.anomalies.length);
+    const analytics = computeAnalytics(
+      transactions.map((t: any) => ({
+        id: t.id,
+        businessId: t.businessId,
+        date: t.date,
+        productName: t.productName,
+        category: t.category ?? undefined,
+        quantity: t.quantity,
+        revenue: t.revenue,
+        cost: t.cost,
+        createdAt: t.createdAt,
+        updatedAt: t.updatedAt,
+      })),
+      anomalyResult.anomalies.length
+    );
     
     // Generate forecast
     const forecast = forecastRevenue(analytics.dailyRevenue, 30);

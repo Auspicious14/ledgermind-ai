@@ -20,7 +20,7 @@ export default function HomePage() {
     {
       icon: Lightbulb,
       title: 'AI-Powered Insights',
-      description: 'Get actionable business recommendations from Claude AI',
+      description: 'Get actionable business recommendations from Gemini 2.5 Flash',
     },
     {
       icon: FileText,
@@ -43,14 +43,17 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="max-w-6xl mx-auto px-6 pt-20 pb-16">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-3 mb-6">
+          <button
+            type="button"
+            className="inline-flex items-center gap-3 mb-6"
+          >
             <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
               <BarChart3 className="w-9 h-9 text-white" />
             </div>
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               LedgerMind AI
             </h1>
-          </div>
+          </button>
           
           <p className="text-2xl text-gray-700 mb-4 font-medium">
             Revenue Intelligence Engine for Small Businesses
@@ -62,7 +65,7 @@ export default function HomePage() {
           
           <div className="flex items-center justify-center gap-4">
             <button
-              onClick={() => router.push('/upload')}
+              onClick={() => router.push('/businesses')}
               className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all"
             >
               Get Started
@@ -127,7 +130,7 @@ export default function HomePage() {
 
         {/* Footer */}
         <div className="text-center mt-16 text-gray-500 text-sm">
-          <p>Built with Next.js 14, TypeScript, Tailwind CSS, and Claude AI</p>
+          <p>Built with Next.js 14, TypeScript, Tailwind CSS, and Gemini 2.5 Flash</p>
           <p className="mt-2">© 2024 LedgerMind AI. All rights reserved.</p>
         </div>
       </div>
