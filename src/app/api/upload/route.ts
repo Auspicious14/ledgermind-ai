@@ -4,12 +4,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { parseCSV } from '@/lib/csv-parser';
 import prisma from '@/lib/db';
 
-/**
- * POST /api/upload
- * Handles CSV file upload and transaction import
- */
 export async function POST(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const businessId = formData.get('businessId') as string;
@@ -28,9 +26,11 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Verify business exists
-    const business = await prisma.business.findUnique({
-      where: { id: businessId },
+    const business = await prisma.business.findFirst({
+      where: {
+        id: businessId,
+        userId,
+      },
     });
     
     if (!business) {

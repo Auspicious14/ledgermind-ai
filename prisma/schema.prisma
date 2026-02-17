@@ -11,15 +11,26 @@ datasource db {
   // provider = "sqlite"
 }
 
+model User {
+  id         String     @id @default(uuid())
+  email      String     @unique
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  businesses Business[]
+}
+
 model Business {
   id           String        @id @default(cuid())
   name         String
   industry     String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id])
   transactions Transaction[]
 
   @@index([createdAt])
+  @@index([userId])
 }
 
 model Transaction {

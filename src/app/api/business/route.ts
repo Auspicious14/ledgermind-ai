@@ -3,13 +3,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
-/**
- * GET /api/business
- * Lists all businesses
- */
 export async function GET() {
   try {
+    const userId = 'demo-user-1';
+
     const businesses = await prisma.business.findMany({
+      where: {
+        userId,
+      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -34,12 +35,10 @@ export async function GET() {
   }
 }
 
-/**
- * POST /api/business
- * Creates a new business
- */
 export async function POST(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const body = await request.json();
     const { name, industry } = body;
     
@@ -50,10 +49,20 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: {},
+      create: {
+        id: userId,
+        email: 'demo-user-1@example.com',
+      },
+    });
+
     const business = await prisma.business.create({
       data: {
         name,
         industry: industry || null,
+        userId,
       },
     });
     

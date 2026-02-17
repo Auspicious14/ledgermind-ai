@@ -3,12 +3,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
-/**
- * GET /api/transactions?businessId=xxx&limit=100&offset=0
- * Retrieves paginated transactions for a business
- */
 export async function GET(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const { searchParams } = new URL(request.url);
     const businessId = searchParams.get('businessId');
     const limit = parseInt(searchParams.get('limit') || '100');
@@ -24,7 +22,20 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Build filters
+    const business = await prisma.business.findFirst({
+      where: {
+        id: businessId,
+        userId,
+      },
+    });
+
+    if (!business) {
+      return NextResponse.json(
+        { error: 'Business not found' },
+        { status: 404 }
+      );
+    }
+
     const where: any = { businessId };
     
     if (productName) {
@@ -72,12 +83,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * DELETE /api/transactions?businessId=xxx
- * Deletes all transactions for a business (useful for re-uploads)
- */
 export async function DELETE(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const { searchParams } = new URL(request.url);
     const businessId = searchParams.get('businessId');
     
@@ -88,6 +97,20 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
+    const business = await prisma.business.findFirst({
+      where: {
+        id: businessId,
+        userId,
+      },
+    });
+
+    if (!business) {
+      return NextResponse.json(
+        { error: 'Business not found' },
+        { status: 404 }
+      );
+    }
+
     const result = await prisma.transaction.deleteMany({
       where: { businessId },
     });

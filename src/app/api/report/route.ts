@@ -9,12 +9,10 @@ import { generateInsights, prepareMetricsForInsight } from '@/core/insight-engin
 import { generateReportHTML } from '@/lib/pdf-generator';
 import type { ReportData, Transaction } from '@/types';
 
-/**
- * GET /api/report?businessId=xxx&format=html|pdf
- * Generates business health report
- */
 export async function GET(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const { searchParams } = new URL(request.url);
     const businessId = searchParams.get('businessId');
     const format = searchParams.get('format') || 'html';
@@ -26,9 +24,11 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Verify business exists
-    const business = await prisma.business.findUnique({
-      where: { id: businessId },
+    const business = await prisma.business.findFirst({
+      where: {
+        id: businessId,
+        userId,
+      },
     });
     
     if (!business) {

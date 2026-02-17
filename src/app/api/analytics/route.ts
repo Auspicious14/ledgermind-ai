@@ -7,12 +7,10 @@ import { forecastRevenue } from '@/core/forecasting';
 import { detectAnomalies } from '@/core/anomaly';
 import { Transaction } from '@/types';
 
-/**
- * GET /api/analytics?businessId=xxx&startDate=xxx&endDate=xxx
- * Retrieves complete analytics for a business
- */
 export async function GET(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const { searchParams } = new URL(request.url);
     const businessId = searchParams.get('businessId');
     const startDate = searchParams.get('startDate');
@@ -25,9 +23,11 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Verify business exists
-    const business = await prisma.business.findUnique({
-      where: { id: businessId },
+    const business = await prisma.business.findFirst({
+      where: {
+        id: businessId,
+        userId,
+      },
     });
     
     if (!business) {

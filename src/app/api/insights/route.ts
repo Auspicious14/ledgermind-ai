@@ -7,12 +7,10 @@ import { forecastRevenue } from '@/core/forecasting';
 import { detectAnomalies } from '@/core/anomaly';
 import { generateInsights, prepareMetricsForInsight } from '@/core/insight-engine';
 
-/**
- * GET /api/insights?businessId=xxx
- * Generates AI-powered business insights
- */
 export async function GET(request: NextRequest) {
   try {
+    const userId = 'demo-user-1';
+
     const { searchParams } = new URL(request.url);
     const businessId = searchParams.get('businessId');
     
@@ -23,9 +21,11 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Verify business exists
-    const business = await prisma.business.findUnique({
-      where: { id: businessId },
+    const business = await prisma.business.findFirst({
+      where: {
+        id: businessId,
+        userId,
+      },
     });
     
     if (!business) {
